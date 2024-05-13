@@ -1,0 +1,22 @@
+---
+packages:
+  - ccache
+  - cppi
+  - gcc
+  - gettext
+  - glib2
+  - json-glib
+  - libarchive
+  - libc
+  - libsoup
+  - libxml2
+  - libxslt
+  - make
+  - meson
+  - ninja
+  - perl-Pod-Man
+  - pkg-config
+  - python3
+  - python3-pytest
+  - python3-requests
+  - rpmbuild
