@@ -100,7 +100,11 @@ static int osinfo_db_export_create_dir(const gchar *prefix,
     children = g_file_enumerate_children(file,
                                          G_FILE_ATTRIBUTE_STANDARD_NAME
                                          ","
-                                         G_FILE_ATTRIBUTE_STANDARD_SIZE,
+                                         G_FILE_ATTRIBUTE_STANDARD_SIZE
+                                         ","
+                                         G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP
+                                         ","
+                                         G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN,
                                          G_FILE_QUERY_INFO_NONE,
                                          NULL,
                                          &err);
@@ -140,7 +144,7 @@ static int osinfo_db_export_create_dir(const gchar *prefix,
 
 static int osinfo_db_export_create_file(const gchar *prefix,
                                         GFile *file,
-                                        GFileInfo *info,
+                                        GFileInfo *arginfo,
                                         GFile *base,
                                         const gchar *target,
                                         struct archive *arc,
@@ -150,25 +154,32 @@ static int osinfo_db_export_create_file(const gchar *prefix,
                                             G_FILE_QUERY_INFO_NONE,
                                             NULL);
 
+    gint ret = 0;
     g_autoptr(GError) err = NULL;
+    g_autoptr(GFileInfo) info = NULL;
     g_autofree gchar *abspath = NULL;
     g_autofree gchar *relpath = NULL;
     g_autofree gchar *entpath = NULL;
     struct archive_entry *entry = NULL;
+    gboolean has_attribute;
 
     abspath = g_file_get_path(file);
     relpath = g_file_get_relative_path(base, file);
 
-    if (!info) {
+    if (!arginfo) {
         info = g_file_query_info(file,
                                  G_FILE_ATTRIBUTE_STANDARD_NAME
                                  ","
-                                 G_FILE_ATTRIBUTE_STANDARD_SIZE,
+                                 G_FILE_ATTRIBUTE_STANDARD_SIZE
+                                 ","
+                                 G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP
+                                 ","
+                                 G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN,
                                  G_FILE_QUERY_INFO_NONE,
                                  NULL,
                                  &err);
     } else {
-        g_object_ref(info);
+        info = g_object_ref(arginfo);
     }
     if (!info) {
         g_printerr("%s: cannot get file info %s: %s\n",
@@ -189,14 +200,22 @@ static int osinfo_db_export_create_file(const gchar *prefix,
     switch (type) {
     case G_FILE_TYPE_REGULAR:
     case G_FILE_TYPE_SYMBOLIC_LINK:
-        if (g_file_info_get_is_backup(info) ||
-            g_file_info_get_is_hidden(info)) {
-            return 0;
+        has_attribute = g_file_info_has_attribute(info, G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP);
+        if (has_attribute && g_file_info_get_is_backup(info)) {
+            g_printerr("%s: Ignoring backup file %s\n", argv0, relpath);
+            goto cleanup;
         }
+
+        has_attribute = g_file_info_has_attribute(info, G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN);
+        if (has_attribute && g_file_info_get_is_hidden(info)) {
+            g_printerr("%s: Ignoring hidden file %s\n", argv0, relpath);
+            goto cleanup;
+        }
+
         if (!g_str_has_suffix(entpath, ".rng") &&
             !g_str_has_suffix(entpath, ".xml") &&
             !g_str_has_suffix(entpath, ".ids")) {
-            return 0;
+            goto cleanup;
         }
 
         if (verbose) {
@@ -220,48 +239,59 @@ static int osinfo_db_export_create_file(const gchar *prefix,
     case G_FILE_TYPE_SPECIAL:
         g_printerr("%s: cannot archive special file type %s\n",
                    argv0, abspath);
-        return -1;
+        ret = -1;
+        goto cleanup;
 
     case G_FILE_TYPE_SHORTCUT:
         g_printerr("%s: cannot archive shortcut file type %s\n",
                    argv0, abspath);
-        return -1;
+        ret = -1;
+        goto cleanup;
 
     case G_FILE_TYPE_MOUNTABLE:
         g_printerr("%s: cannot archive mount file type %s\n",
                    argv0, abspath);
-        return -1;
+        ret = -1;
+        goto cleanup;
 
     case G_FILE_TYPE_UNKNOWN:
     default:
         g_printerr("%s: cannot archive unknown file type %s\n",
                    argv0, abspath);
-        return -1;
+        ret = -1;
+        goto cleanup;
     }
 
     if (archive_write_header(arc, entry) != ARCHIVE_OK) {
         g_printerr("%s: cannot write archive header %s: %s\n",
                    argv0, target, archive_error_string(arc));
-        return -1;
+        ret = -1;
+        goto cleanup;
     }
 
     switch (type) {
     case G_FILE_TYPE_REGULAR:
     case G_FILE_TYPE_SYMBOLIC_LINK:
-        if (osinfo_db_export_create_reg(file, abspath, target, arc) < 0)
-            return -1;
+        if (osinfo_db_export_create_reg(file, abspath, target, arc) < 0) {
+            ret = -1;
+            goto cleanup;
+        }
         break;
 
     case G_FILE_TYPE_DIRECTORY:
-        if (osinfo_db_export_create_dir(prefix, file, base, abspath, target, arc, verbose) < 0)
-            return -1;
+        if (osinfo_db_export_create_dir(prefix, file, base, abspath, target, arc, verbose) < 0) {
+            ret = -1;
+            goto cleanup;
+        }
         break;
 
     default:
         g_assert_not_reached();
     }
 
-    return 0;
+cleanup:
+    archive_entry_free(entry);
+    return ret;
 }
 
 static int osinfo_db_export_create_version(const gchar *prefix,
@@ -442,12 +472,11 @@ gint main(gint argc, gchar **argv)
     gboolean local = FALSE;
     gboolean system = FALSE;
     g_autofree gchar *archive = NULL;
-    g_autofree gchar *autoversion = NULL;
     g_autofree gchar *prefix = NULL;
-    const gchar *root = "";
-    const gchar *custom = NULL;
-    const gchar *version = NULL;
-    const gchar *license = NULL;
+    g_autofree gchar *root = g_strdup("");
+    g_autofree gchar *custom = NULL;
+    g_autofree gchar *version = NULL;
+    g_autofree gchar *license = NULL;
     int locs = 0;
     const GOptionEntry entries[] = {
       { "verbose", 'v', 0, G_OPTION_ARG_NONE, (void*)&verbose,
@@ -507,8 +536,7 @@ gint main(gint argc, gchar **argv)
 
     entryts = time(NULL);
     if (version == NULL) {
-        autoversion = osinfo_db_version();
-        version = autoversion;
+        version = osinfo_db_version();
     }
     prefix = g_strdup_printf("osinfo-db-%s", version);
     if (argc == 2) {
