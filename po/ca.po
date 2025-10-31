@@ -1,0 +1,214 @@
+# Daniel Berrange <dan-zanata@berrange.com>, 2016. #zanata
+# Antoni Bella Pérez <antonibella5@yahoo.com>, 2020.
+msgid ""
+msgstr ""
+"Project-Id-Version: osinfo-db-tools\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-03-23 11:40+0100\n"
+"PO-Revision-Date: 2020-01-09 20:15+0000\n"
+"Last-Translator: Antoni Bella Pérez <antonibella5@yahoo.com>\n"
+"Language-Team: Catalan <https://translate.stg.fedoraproject.org/projects/"
+"libosinfo/osinfo-db-tools/ca/>\n"
+"Language: ca\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 3.9.1\n"
+
+#: tools/osinfo-db-export.c:454 tools/osinfo-db-import.c:432
+#: tools/osinfo-db-validate.c:233
+msgid "Verbose progress information"
+msgstr "Informació detallada del progrés"
+
+#: tools/osinfo-db-export.c:456
+msgid "Export the osinfo-db user directory"
+msgstr ""
+
+#: tools/osinfo-db-export.c:458
+msgid "Export the osinfo-db local directory"
+msgstr ""
+
+#: tools/osinfo-db-export.c:460
+msgid "Export the osinfo-db system directory"
+msgstr ""
+
+#: tools/osinfo-db-export.c:462
+msgid "Export an osinfo-db custom directory"
+msgstr ""
+
+#: tools/osinfo-db-export.c:464
+msgid "Set version number of archive"
+msgstr ""
+
+#: tools/osinfo-db-export.c:466
+msgid "Export the osinfo-db root directory"
+msgstr ""
+
+#: tools/osinfo-db-export.c:468
+msgid "License file"
+msgstr ""
+
+#: tools/osinfo-db-export.c:478
+msgid "- Export database archive "
+msgstr ""
+
+#: tools/osinfo-db-export.c:483 tools/osinfo-db-import.c:459
+#: tools/osinfo-db-path.c:68
+#, c-format
+msgid ""
+"%s: error while parsing commandline options: %s\n"
+"\n"
+msgstr ""
+"%s: error en analitzar sintàcticament les opcions de la línia d'ordres: %s\n"
+"\n"
+
+#: tools/osinfo-db-export.c:490
+#, c-format
+msgid "%s: expected path to one archive file to export\n"
+msgstr ""
+
+#: tools/osinfo-db-export.c:504 tools/osinfo-db-import.c:480
+#: tools/osinfo-db-path.c:89
+#, c-format
+msgid "Only one of --user, --local, --system & --dir can be used\n"
+msgstr ""
+
+#: tools/osinfo-db-import.c:434
+msgid "Import into user directory"
+msgstr ""
+
+#: tools/osinfo-db-import.c:436
+msgid "Import into local directory"
+msgstr ""
+
+#: tools/osinfo-db-import.c:438
+msgid "Import into system directory"
+msgstr ""
+
+#: tools/osinfo-db-import.c:440
+msgid "Import into custom directory"
+msgstr ""
+
+#: tools/osinfo-db-import.c:442 tools/osinfo-db-validate.c:243
+msgid "Installation root directory"
+msgstr ""
+
+#: tools/osinfo-db-import.c:444
+msgid "Import the latest osinfo-db from osinfo-db's website"
+msgstr ""
+
+#: tools/osinfo-db-import.c:454
+msgid "- Import database archive "
+msgstr ""
+
+#: tools/osinfo-db-import.c:466
+#, c-format
+msgid "%s: expected path to one archive file to import\n"
+msgstr ""
+
+#: tools/osinfo-db-path.c:45
+msgid "Report the user directory"
+msgstr ""
+
+#: tools/osinfo-db-path.c:47
+msgid "Report the local directory"
+msgstr ""
+
+#: tools/osinfo-db-path.c:49
+msgid "Report the system directory"
+msgstr ""
+
+#: tools/osinfo-db-path.c:51
+msgid "Report the custom directory"
+msgstr ""
+
+#: tools/osinfo-db-path.c:53
+msgid "Report against root directory"
+msgstr ""
+
+#: tools/osinfo-db-path.c:63
+msgid "- Report database locations "
+msgstr ""
+
+#: tools/osinfo-db-path.c:75
+#, c-format
+msgid "%s: unexpected extra arguments\n"
+msgstr ""
+
+#: tools/osinfo-db-util.c:150
+#, c-format
+msgid "Unable to locate '%s' in any database location"
+msgstr ""
+
+#: tools/osinfo-db-validate.c:43
+#, c-format
+msgid "Schema validity error %s"
+msgstr "Error de validesa de l'esquema %s"
+
+#: tools/osinfo-db-validate.c:59
+msgid "Unable to create libxml parser"
+msgstr "No es pot crear l'analitzador sintàctic libxml"
+
+#: tools/osinfo-db-validate.c:67
+#, c-format
+msgid "Unable to parse XML document '%s'"
+msgstr "No es pot analitzar sintàcticament el document XML «%s»"
+
+#: tools/osinfo-db-validate.c:96
+#, c-format
+msgid "Unable to validate XML document '%s'"
+msgstr "No es pot validar el document XML «%s»"
+
+#: tools/osinfo-db-validate.c:139
+#, c-format
+msgid "Processing '%s'...\n"
+msgstr "S'està processant «%s»...\n"
+
+#: tools/osinfo-db-validate.c:182
+#, c-format
+msgid "Unable to create RNG parser for %s"
+msgstr "No es pot crear l'analitzador sintàctic RNG per %s"
+
+#: tools/osinfo-db-validate.c:190
+#, c-format
+msgid "Unable to parse RNG %s"
+msgstr "No es pot analitzar sintàcticament RNG %s"
+
+#: tools/osinfo-db-validate.c:198
+#, c-format
+msgid "Unable to create RNG validation context %s"
+msgstr "No es pot crear el context de validació RNG %s"
+
+#: tools/osinfo-db-validate.c:235
+msgid "Validate files in user directory"
+msgstr ""
+
+#: tools/osinfo-db-validate.c:237
+msgid "Validate files in local directory"
+msgstr ""
+
+#: tools/osinfo-db-validate.c:239
+msgid "Validate files in system directory"
+msgstr ""
+
+#: tools/osinfo-db-validate.c:241
+msgid "Validate files in custom directory"
+msgstr ""
+
+#: tools/osinfo-db-validate.c:252
+msgid "- Validate XML documents "
+msgstr "- Valida documents XML "
+
+#: tools/osinfo-db-validate.c:257
+#, c-format
+msgid "Error while parsing commandline options: %s\n"
+msgstr ""
+"Error en analitzar sintàcticament les opcions de la línia d'ordres: %s\n"
+
+#: tools/osinfo-db-validate.c:272
+#, c-format
+msgid ""
+"Only one of --user, --local, --system, --dir or positional filenames can be "
+"used\n"
+msgstr ""
